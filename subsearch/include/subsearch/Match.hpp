@@ -17,6 +17,10 @@ public:
     std::partial_ordering operator<=>(const Match& other) const;
 
     friend std::ostream& operator<<(std::ostream& out, const Match& m);
+
+    int getPos() const { return pos; }
+    int getLen() const { return len; }
+    int getPercentage() const { return percentage; }
 };
 
 }  // namespace subsearch
