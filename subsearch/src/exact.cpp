@@ -1,6 +1,6 @@
 #include <cctype>
-#include <unordered_map>
 #include <subsearch/exact.hpp>
+#include <unordered_map>
 
 namespace subsearch::exact {
 
@@ -72,51 +72,48 @@ std::vector<Match> rabinKarpNoChecking(const std::string& s,
     return matches;
 }
 
-std::vector<Match> boyerMooreHorspool(const std::string& s,
-                                      const std::string& pattern) {
+void BoyerMoore::buildBadCharTable(const std::string& pattern, int m,
+                                   std::unordered_map<char, int>& badChar) {
+    for (int i = 0; i < m - 1; ++i) {
+        char c = tolower(static_cast<unsigned char>(pattern[i]));
+        badChar[c] = m - 1 - i;
+    }
+}
+void BoyerMoore::buildGoodSuffTable(const std::string& pattern, int m,
+                                    std::vector<int>& goodSuff) {}
+
+std::vector<Match> BoyerMoore::searchBoyerMooreHorspool(
+    const std::string& text, const std::string& pattern) {
     std::vector<Match> matches;
-    int n = s.length();
+    int n = text.length();
     int m = pattern.length();
-    if (m > n || pattern == "")
+
+    if (m > n || m == 0)
         return matches;
 
-    std::unordered_map<char, int> charsLastOccuranceInPattern;
-    for (int i = 0; i < m; ++i) {
-        charsLastOccuranceInPattern[tolower(static_cast<unsigned char>(pattern[i]))] = i;
-    }
-    for (int i = m - 1; i < n; ++i) {
-        bool isOk = true;
-        for (int j = m - 1; j >= 0; --j) {
-            if (tolower(static_cast<unsigned char>(pattern[j])) !=
-                tolower(static_cast<unsigned char>(s[i - (m - 1 - j)]))) {
-                isOk = false;
-                if (!charsLastOccuranceInPattern.contains(tolower(
-                        static_cast<unsigned char>(s[i - (m - 1 - j)])))) {
-                    i += j;
-                } else {
-                    i += m -
-                         charsLastOccuranceInPattern.at(tolower(
-                             static_cast<unsigned char>(s[i - (m - 1 - j)]))) - 2;
-                }
-                break;
-            }
+    std::unordered_map<char, int> badChar;
+    buildBadCharTable(pattern, m, badChar);
+
+    for (int i = m - 1; i < n;) {
+        int iT = i;
+        int iP = m - 1;
+
+        while (iP >= 0 &&
+               std::tolower(static_cast<unsigned char>(text[iT])) ==
+                   std::tolower(static_cast<unsigned char>(pattern[iP]))) {
+            --iT, --iP;
         }
-        if (isOk) {
-            matches.push_back(Match(i - m + 1, m, &s));
+
+        if (iP < 0) {
+            matches.push_back({i - m + 1, m, &text});
         }
+
+        char ch = static_cast<unsigned char>(
+            std::tolower(static_cast<unsigned char>(text[i])));
+        auto bcIt = badChar.find(ch);
+        i += (bcIt != badChar.end()) ? bcIt->second : m;
     }
     return matches;
 }
-
-// std::vector<Match> boyerMoore(const std::string& s,
-//                                       const std::string& pattern) {
-//     std::vector<Match> matches;
-//     int n = s.length();
-//     int m = pattern.length();
-//     if (m > n)
-//         return matches;
-
-//     return matches;
-// }
 
 }  // namespace subsearch::exact
