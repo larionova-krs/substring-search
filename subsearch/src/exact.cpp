@@ -19,8 +19,7 @@ std::vector<Match> rabinKarp(const std::string& s, const std::string& pattern) {
     }
 
     for (int i = 0; i < m; ++i) {
-        patternHash =
-            x * patternHash + tolower(static_cast<unsigned char>(pattern[i]));
+        patternHash = x * patternHash + tolower(static_cast<unsigned char>(pattern[i]));
         sHash = x * sHash + tolower(static_cast<unsigned char>(s[i]));
     }
 
@@ -41,8 +40,7 @@ std::vector<Match> rabinKarp(const std::string& s, const std::string& pattern) {
     return matches;
 }
 
-std::vector<Match> rabinKarpNoChecking(const std::string& s,
-                                       const std::string& pattern) {
+std::vector<Match> rabinKarpNoChecking(const std::string& s, const std::string& pattern) {
     std::vector<Match> matches;
     int n = s.length();
     int m = pattern.length();
@@ -57,8 +55,7 @@ std::vector<Match> rabinKarpNoChecking(const std::string& s,
     }
 
     for (int i = 0; i < m; ++i) {
-        patternHash =
-            x * patternHash + tolower(static_cast<unsigned char>(pattern[i]));
+        patternHash = x * patternHash + tolower(static_cast<unsigned char>(pattern[i]));
         sHash = x * sHash + tolower(static_cast<unsigned char>(s[i]));
     }
 
@@ -72,15 +69,15 @@ std::vector<Match> rabinKarpNoChecking(const std::string& s,
     return matches;
 }
 
-void BoyerMoore::buildBadCharTable(const std::string& pattern, int m,
-                                   std::unordered_map<char, int>& badChar) {
-    for (int i = 0; i < m - 1; ++i) {
+void BoyerMoore::buildBadCharTable(const std::string& pattern, std::unordered_map<char, int>& badChar) {
+    for (int i = 0; i < pattern.size() - 1; ++i) {
         char c = tolower(static_cast<unsigned char>(pattern[i]));
-        badChar[c] = m - 1 - i;
+        badChar[c] = pattern.size() - 1 - i;
     }
 }
 
-void BoyerMoore::computeSuffixes(const std::string& pat, int m, std::vector<int>& suff) {
+void BoyerMoore::computeSuffixes(const std::string& pat, std::vector<int>& suff) {
+    int m = pat.size();
     // Note: processed from right to left
     int checkedBound = m - 1;
     int segmentStart = m - 1;
@@ -108,9 +105,10 @@ void BoyerMoore::computeSuffixes(const std::string& pat, int m, std::vector<int>
     }
 }
 
-void BoyerMoore::buildGoodSuffTable(const std::string& pat, int m, std::vector<int>& goodSuff) {
+void BoyerMoore::buildGoodSuffTable(const std::string& pat, std::vector<int>& goodSuff) {
+    int m = pat.size();
     std::vector<int> suff;
-    computeSuffixes(pat, m, suff);
+    computeSuffixes(pat, suff);
 
     goodSuff.assign(m, m);
     for (int i = m - 1, j = 0; i >= 0; --i) {
@@ -128,8 +126,7 @@ void BoyerMoore::buildGoodSuffTable(const std::string& pat, int m, std::vector<i
     }
 }
 
-std::vector<Match> BoyerMoore::searchBoyerMooreHorspool(
-    const std::string& text, const std::string& pattern) {
+std::vector<Match> BoyerMoore::searchBoyerMooreHorspool(const std::string& text, const std::string& pattern) {
     std::vector<Match> matches;
     int n = text.length();
     int m = pattern.length();
@@ -138,15 +135,14 @@ std::vector<Match> BoyerMoore::searchBoyerMooreHorspool(
         return matches;
 
     std::unordered_map<char, int> badChar;
-    buildBadCharTable(pattern, m, badChar);
+    buildBadCharTable(pattern, badChar);
 
     for (int i = m - 1; i < n;) {
         int iT = i;
         int iP = m - 1;
 
-        while (iP >= 0 &&
-               std::tolower(static_cast<unsigned char>(text[iT])) ==
-                   std::tolower(static_cast<unsigned char>(pattern[iP]))) {
+        while (iP >= 0 && std::tolower(static_cast<unsigned char>(text[iT])) ==
+                              std::tolower(static_cast<unsigned char>(pattern[iP]))) {
             --iT, --iP;
         }
 
@@ -161,8 +157,7 @@ std::vector<Match> BoyerMoore::searchBoyerMooreHorspool(
     return matches;
 }
 
-std::vector<Match> BoyerMoore::searchBoyerMoore(const std::string& text,
-                                                const std::string& pattern) {
+std::vector<Match> BoyerMoore::searchBoyerMoore(const std::string& text, const std::string& pattern) {
     std::vector<Match> matches;
     int n = text.length();
     int m = pattern.length();
@@ -172,15 +167,14 @@ std::vector<Match> BoyerMoore::searchBoyerMoore(const std::string& text,
 
     std::unordered_map<char, int> badChar;
     std::vector<int> goodSuff;
-    buildBadCharTable(pattern, m, badChar);
-    buildGoodSuffTable(pattern, m, goodSuff);
+    buildBadCharTable(pattern, badChar);
+    buildGoodSuffTable(pattern, goodSuff);
 
     for (int j = 0; j <= n - m;) {
         int i = m - 1;
 
-        while (i >= 0 &&
-               std::tolower(static_cast<unsigned char>(text[j + i])) ==
-                   std::tolower(static_cast<unsigned char>(pattern[i]))) {
+        while (i >= 0 && std::tolower(static_cast<unsigned char>(text[j + i])) ==
+                             std::tolower(static_cast<unsigned char>(pattern[i]))) {
             --i;
         }
 

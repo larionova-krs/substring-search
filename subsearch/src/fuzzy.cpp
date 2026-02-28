@@ -4,9 +4,7 @@
 
 namespace subsearch::fuzzy {
 
-std::vector<Match> naiveFuzzySearch(const std::string& s,
-                                    const std::string& pattern,
-                                    double threshold) {
+std::vector<Match> naiveFuzzySearch(const std::string& s, const std::string& pattern, double threshold) {
     std::vector<Match> matches;
     int n = s.length();
     int m = pattern.length();
