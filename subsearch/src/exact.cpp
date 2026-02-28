@@ -4,9 +4,9 @@
 
 namespace subsearch::exact {
 
-std::vector<Match> rabinKarp(const std::string& s, const std::string& pattern) {
+std::vector<Match> rabinKarp(const std::string& text, const std::string& pattern) {
     std::vector<Match> matches;
-    int n = s.length();
+    int n = text.length();
     int m = pattern.length();
     if (m > n)
         return matches;
@@ -20,29 +20,29 @@ std::vector<Match> rabinKarp(const std::string& s, const std::string& pattern) {
 
     for (int i = 0; i < m; ++i) {
         patternHash = x * patternHash + tolower(static_cast<unsigned char>(pattern[i]));
-        sHash = x * sHash + tolower(static_cast<unsigned char>(s[i]));
+        sHash = x * sHash + tolower(static_cast<unsigned char>(text[i]));
     }
 
     for (int i = 0; i <= n - m; ++i) {
         if (patternHash == sHash) {
             bool match = true;
             for (int j = 0; j < m && match; ++j) {
-                match = (tolower(static_cast<unsigned char>(s[i + j])) ==
+                match = (tolower(static_cast<unsigned char>(text[i + j])) ==
                          tolower(static_cast<unsigned char>(pattern[j])));
             }
             if (match) {
-                matches.push_back(Match(i, m, &s));
+                matches.push_back(Match(i, m, &text));
             }
         }
-        sHash = x * (sHash - tolower(static_cast<unsigned char>(s[i])) * h) +
-                tolower(static_cast<unsigned char>(s[i + m]));
+        sHash = x * (sHash - tolower(static_cast<unsigned char>(text[i])) * h) +
+                tolower(static_cast<unsigned char>(text[i + m]));
     }
     return matches;
 }
 
-std::vector<Match> rabinKarpNoChecking(const std::string& s, const std::string& pattern) {
+std::vector<Match> rabinKarpNoChecking(const std::string& text, const std::string& pattern) {
     std::vector<Match> matches;
-    int n = s.length();
+    int n = text.length();
     int m = pattern.length();
     if (m > n)
         return matches;
@@ -56,15 +56,15 @@ std::vector<Match> rabinKarpNoChecking(const std::string& s, const std::string& 
 
     for (int i = 0; i < m; ++i) {
         patternHash = x * patternHash + tolower(static_cast<unsigned char>(pattern[i]));
-        sHash = x * sHash + tolower(static_cast<unsigned char>(s[i]));
+        sHash = x * sHash + tolower(static_cast<unsigned char>(text[i]));
     }
 
     for (int i = 0; i <= n - m; ++i) {
         if (patternHash == sHash) {
-            matches.push_back(Match(i, m, &s));
+            matches.push_back(Match(i, m, &text));
         }
-        sHash = x * (sHash - tolower(static_cast<unsigned char>(s[i])) * h) +
-                tolower(static_cast<unsigned char>(s[i + m]));
+        sHash = x * (sHash - tolower(static_cast<unsigned char>(text[i])) * h) +
+                tolower(static_cast<unsigned char>(text[i + m]));
     }
     return matches;
 }
@@ -76,8 +76,8 @@ void BoyerMoore::buildBadCharTable(const std::string& pattern, std::unordered_ma
     }
 }
 
-void BoyerMoore::computeSuffixes(const std::string& pat, std::vector<int>& suff) {
-    int m = pat.size();
+void BoyerMoore::computeSuffixes(const std::string& pattern, std::vector<int>& suff) {
+    int m = pattern.size();
     // Note: processed from right to left
     int checkedBound = m - 1;
     int segmentStart = m - 1;
@@ -96,8 +96,8 @@ void BoyerMoore::computeSuffixes(const std::string& pat, std::vector<int>& suff)
                 checkedBound = i;
             segmentStart = i;
             while (checkedBound >= 0 &&
-                   std::tolower(static_cast<unsigned char>(pat[checkedBound])) ==
-                       std::tolower(static_cast<unsigned char>(pat[m - 1 - (segmentStart - checkedBound)]))) {
+                   std::tolower(static_cast<unsigned char>(pattern[checkedBound])) ==
+                       std::tolower(static_cast<unsigned char>(pattern[m - 1 - (segmentStart - checkedBound)]))) {
                 --checkedBound;
             }
             suff[i] = segmentStart - checkedBound;
@@ -105,10 +105,10 @@ void BoyerMoore::computeSuffixes(const std::string& pat, std::vector<int>& suff)
     }
 }
 
-void BoyerMoore::buildGoodSuffTable(const std::string& pat, std::vector<int>& goodSuff) {
-    int m = pat.size();
+void BoyerMoore::buildGoodSuffTable(const std::string& pattern, std::vector<int>& goodSuff) {
+    int m = pattern.size();
     std::vector<int> suff;
-    computeSuffixes(pat, suff);
+    computeSuffixes(pattern, suff);
 
     goodSuff.assign(m, m);
     for (int i = m - 1, j = 0; i >= 0; --i) {
