@@ -23,4 +23,16 @@ public:
     static std::vector<Match> searchBoyerMoore(const std::string& text, const std::string& pattern);
 };
 
+class KMP {
+    friend class KMPTestApi;
+
+private:
+    static void computePrefixTableMP(const std::string& pattern, std::vector<int>& prefix);
+    static void computeFailureTableKMP(const std::string& pattern, std::vector<int>& failure);
+
+public:
+    static std::vector<Match> searchMP(const std::string& text, const std::string& pattern);
+    static std::vector<Match> searchKMP(const std::string& text, const std::string& pattern);
+};
+
 }  // namespace subsearch::exact

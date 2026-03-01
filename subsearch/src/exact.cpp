@@ -191,4 +191,84 @@ std::vector<Match> BoyerMoore::searchBoyerMoore(const std::string& text, const s
     return matches;
 }
 
+void KMP::computePrefixTableMP(const std::string& pattern, std::vector<int>& prefix) {
+    int m = pattern.size();
+    prefix.assign(m, 0);
+
+    for (int i = 1, j = 0; i < m; ++i) {
+        while (j > 0 && pattern[i] != pattern[j]) {
+            j = prefix[j - 1];
+        }
+        if (pattern[i] == pattern[j]) {
+            ++j;
+        }
+        prefix[i] = j;
+    }
+}
+
+void KMP::computeFailureTableKMP(const std::string& pattern, std::vector<int>& failure) {
+    int m = pattern.size();
+    failure.resize(m + 1);
+
+    int i = 0;
+    int j = failure[0] = -1;
+    while (i < m) {
+        while (j > -1 && pattern[i] != pattern[j]) {
+            j = failure[j];
+        }
+        ++i, ++j;
+        failure[i] = (pattern[i] == pattern[j]) ? failure[j] : j;
+    }
+}
+
+std::vector<Match> KMP::searchMP(const std::string& text, const std::string& pattern) {
+    std::vector<Match> matches;
+    int n = text.length();
+    int m = pattern.length();
+
+    if (m > n || m == 0)
+        return matches;
+
+    std::vector<int> lps;
+    computePrefixTableMP(pattern, lps);
+
+    for (int i = 0, j = 0; i < n; ++i) {
+        while (j > 0 && pattern[j] != text[i]) {
+            j = lps[j - 1];
+        }
+        if (pattern[j] == text[i]) {
+            ++j;
+        }
+        if (j == m) {
+            matches.emplace_back(i - m + 1, m, &text);
+            j = lps[j - 1];
+        }
+    }
+    return matches;
+}
+
+std::vector<Match> KMP::searchKMP(const std::string& text, const std::string& pattern) {
+    std::vector<Match> matches;
+    int n = text.length();
+    int m = pattern.length();
+
+    if (m > n || m == 0)
+        return matches;
+
+    std::vector<int> kmpNext;
+    computeFailureTableKMP(pattern, kmpNext);
+
+    for (int i = 0, j = 0; j < n;) {
+        while (i > -1 && pattern[i] != text[j]) {
+            i = kmpNext[i];
+        }
+        ++i, ++j;
+        if (i >= m) {
+            matches.emplace_back(j - i, m, &text);
+            i = kmpNext[i];
+        }
+    }
+    return matches;
+}
+
 }  // namespace subsearch::exact
