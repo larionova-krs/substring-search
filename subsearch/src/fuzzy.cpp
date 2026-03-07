@@ -25,7 +25,7 @@ std::vector<Match> naiveFuzzySearch(const std::string& text, const std::string& 
     return matches;
 }
 
-int wagnerFischerLevenshteinDist(const std::string& s1, const std::string& s2, int insertCost, int deleteCost, int replaceCost) {
+int wagnerFischerComputeDist(const std::string& s1, const std::string& s2, int insertCost, int deleteCost, int replaceCost) {
     int m = s1.size();
     int n = s2.size();
     std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1));
@@ -93,7 +93,7 @@ std::vector<Match> sellersSearch(const std::string& text, const std::string& pat
     }
 
     fillMatches(matches, text, pattern, dp, threshold, insertCost, deleteCost, replaceCost);
-    
+
     return matches;
 }
 

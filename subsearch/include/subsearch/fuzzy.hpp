@@ -8,7 +8,7 @@ namespace subsearch::fuzzy {
 
 std::vector<Match> naiveFuzzySearch(const std::string& text, const std::string& pattern, double threshold = 70.0);
 
-int wagnerFischerLevenshteinDist(const std::string& s1, const std::string& s2, int insertCost = 1, int deleteCost = 1, int replaceCost = 1);
+int wagnerFischerComputeDist(const std::string& s1, const std::string& s2, int insertCost = 1, int deleteCost = 1, int replaceCost = 1);
 
 void fillMatches(std::vector<Match>& matches, const std::string& text, const std::string& pattern, const std::vector<std::vector<int>>& dp, int threshold = 0, int insertCost = 1, int deleteCost = 1, int replaceCost = 1);
 std::vector<Match> sellersSearch(const std::string& text, const std::string& pattern, int threshold = 0, int insertCost = 1, int deleteCost = 1, int replaceCost = 1);
