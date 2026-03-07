@@ -5,14 +5,14 @@
 #include "Tester.hpp"
 
 int main() {
-    std::ofstream outfile("benchmark/data/output/testput.txt");
+    std::ofstream outfile("../../benchmark/data/output/testput.txt");
     if (!outfile) {
         std::cerr << "Cannot open file testput.txt" << std::endl;
         return 1;
     }
     Tester tester(outfile);
 
-    std::string infile = "benchmark/data/input//war-and-peace.txt";
+    std::string infile = "../../benchmark/data/input/war-and-peace.txt";
     try {
         tester.loadTextFromFile(infile);
     } catch (const std::exception& e) {
@@ -29,13 +29,13 @@ int main() {
     tester.testAlgorithm("Rabin-Karp (no checking)",
                          subsearch::exact::rabinKarpNoChecking, testPatterns);
 
-    auto fuzzySearchWithThreshold = [](const std::string& text,
-                                       const std::string& pattern) {
-        return subsearch::fuzzy::naiveFuzzySearch(text, pattern);
-    };
+    // auto fuzzySearchWithThreshold = [](const std::string& text,
+    //                                    const std::string& pattern) {
+    //     return subsearch::fuzzy::naiveFuzzySearch(text, pattern);
+    // };
 
-    tester.testAlgorithm("Fuzzy search", fuzzySearchWithThreshold,
-                         testPatterns);
+    // tester.testAlgorithm("Fuzzy search", fuzzySearchWithThreshold,
+    //                      testPatterns);
 
     return 0;
 }

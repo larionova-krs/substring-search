@@ -4,27 +4,6 @@
 
 namespace subsearch::fuzzy {
 
-std::vector<Match> naiveFuzzySearch(const std::string& text, const std::string& pattern, double threshold) {
-    std::vector<Match> matches;
-    int n = text.length();
-    int m = pattern.length();
-
-    for (int i = 0; i <= n - m; ++i) {
-        int matchesCount = 0;
-        for (int j = 0; j < m; ++j) {
-            if (tolower(static_cast<unsigned char>(text[i + j])) ==
-                tolower(static_cast<unsigned char>(pattern[j])))
-                ++matchesCount;
-        }
-        double similarity = (matchesCount * 100.0) / m;
-        if (similarity >= threshold) {
-            matches.push_back(Match(i, m, &text, similarity));
-        }
-    }
-    std::sort(matches.begin(), matches.end());
-    return matches;
-}
-
 int wagnerFischerComputeDist(const std::string& s1, const std::string& s2, int insertCost, int deleteCost, int replaceCost) {
     int m = s1.size();
     int n = s2.size();
