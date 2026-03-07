@@ -20,7 +20,7 @@ public:
 
     int getPos() const { return pos; }
     int getLen() const { return len; }
-    int getPercentage() const { return percentage; }
+    double getPercentage() const { return percentage; }
 };
 
 }  // namespace subsearch
