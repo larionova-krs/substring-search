@@ -44,7 +44,7 @@ int wagnerFischerComputeDist(const std::string& s1, const std::string& s2, int i
     return dp[m][n];
 }
 
-void fillMatches(std::vector<Match>& matches, const std::string& text, const std::string& pattern, const std::vector<std::vector<int>>& dp, int threshold, int insertCost, int deleteCost, int replaceCost) {
+void Sellers::fillMatches(std::vector<Match>& matches, const std::string& text, const std::string& pattern, const std::vector<std::vector<int>>& dp, int threshold, int insertCost, int deleteCost, int replaceCost) {
     int m = pattern.size();
     int n = text.size();
 
@@ -75,7 +75,7 @@ void fillMatches(std::vector<Match>& matches, const std::string& text, const std
     }
 }
 
-std::vector<Match> sellersSearch(const std::string& text, const std::string& pattern, int threshold, int insertCost, int deleteCost, int replaceCost) {
+std::vector<Match> Sellers::searchSellers(const std::string& text, const std::string& pattern, int threshold, int insertCost, int deleteCost, int replaceCost) {
     std::vector<Match> matches;
     int m = pattern.size();
     int n = text.size();
