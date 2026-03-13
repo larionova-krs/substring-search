@@ -1,5 +1,7 @@
 #include <algorithm>
 #include <cctype>
+#include <climits>
+#include <cstdint>
 #include <subsearch/fuzzy.hpp>
 
 namespace subsearch::fuzzy {
@@ -72,6 +74,66 @@ std::vector<Match> Sellers::searchSellers(const std::string& text, const std::st
     }
 
     fillMatches(matches, text, pattern, dp, threshold, insertCost, deleteCost, replaceCost);
+
+    return matches;
+}
+
+void WuManber::addMatch(int pos, const std::vector<uint64_t>& R, int m, const std::string& text, std::vector<Match>& matches) {
+    uint64_t success_bit = (1ULL << (64 - m));
+    int d = 0;
+    while (!(R[d] & success_bit)) {
+        ++d;
+    }
+    int start = std::max(pos - m + 1, 0);
+    double similarity = (1.0 - static_cast<double>(d) / m) * 100.0;
+    matches.emplace_back(start, m, &text, similarity);
+}
+
+std::vector<Match> WuManber::searchWuManber(const std::string& text, const std::string& pattern, int k) {
+    std::vector<Match> matches;
+    int m = static_cast<int>(pattern.size());
+
+    if (m == 0) {
+        return matches;
+    }
+    if (m > 64) {
+        throw std::runtime_error("Pattern length exceeds 64, not supported");
+    }
+
+    uint64_t mask[UCHAR_MAX + 1] = {0};
+    for (int i = 0; i < m; ++i) {
+        mask[pattern[i]] |= (1ULL << (63 - i));
+    }
+
+    const uint64_t HIGH_BIT = (1ULL << 63);
+
+    std::vector<uint64_t> R(k + 1, 0);
+
+    for (size_t j = 0; j < text.size(); ++j) {
+        unsigned char c = text[j];
+
+        std::vector<uint64_t> R_old = R;
+
+        R[0] = ((R_old[0] >> 1) | HIGH_BIT) & mask[c];
+
+        for (int d = 1; d <= k; ++d) {
+            // 1) Match – продолжаем существующие префиксы
+            uint64_t match = ((R_old[d] >> 1) | HIGH_BIT) & mask[c];
+            // 2) Substitution – состояние с d-1 ошибками до обработки
+            uint64_t sub = ((R_old[d - 1] >> 1) | HIGH_BIT);
+            // 3) Deletion – новое состояние с d-1 ошибками
+            uint64_t del = ((R[d - 1] >> 1) | HIGH_BIT);
+            // 4) Insertion – состояние с d-1 ошибками без сдвига
+            uint64_t ins = R_old[d - 1];
+            
+            R[d] = match | sub | ins | del;
+        }
+
+        uint64_t success_bit = (1ULL << (64 - m));
+        if ((R[k] & success_bit)) {
+            addMatch(j, R, m, text, matches);
+        }
+    }
 
     return matches;
 }
