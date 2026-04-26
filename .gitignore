@@ -4,10 +4,10 @@ cmake-build-*/
 out/
 
 # Входные и выходные данные бенчмарка
-benchmark/data/input/*
-!benchmark/data/input/.gitkeep
-benchmark/data/output/*
-!benchmark/data/output/.gitkeep
+benchmarks/data/input/*
+!benchmarks/data/input/.gitkeep
+benchmarks/data/output/*
+!benchmarks/data/output/.gitkeep
 
 # Created by https://www.toptal.com/developers/gitignore/api/linux,visualstudiocode,cmake,c++
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,visualstudiocode,cmake,c++

@@ -5,14 +5,14 @@
 #include "Tester.hpp"
 
 int main() {
-    std::ofstream outfile("../../benchmark/data/output/testput.txt");
+    std::ofstream outfile("../../benchmarks/data/output/testput.txt");
     if (!outfile) {
         std::cerr << "Cannot open file testput.txt" << std::endl;
         return 1;
     }
     Tester tester(outfile);
 
-    std::string infile = "../../benchmark/data/input/war-and-peace.txt";
+    std::string infile = "../../benchmarks/data/input/war-and-peace.txt";
     try {
         tester.loadTextFromFile(infile);
     } catch (const std::exception& e) {
