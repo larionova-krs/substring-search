@@ -2,6 +2,7 @@ find_package(benchmark REQUIRED)
 
 add_executable(subsearch_benchmarks
     benchmark_main.cpp
+    common.cpp
     exact_benchmark.cpp
     fuzzy_benchmark.cpp
 )
